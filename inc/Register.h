@@ -56,5 +56,5 @@ struct Register {
 
 template <std::size_t Size, typename AccessType = ReadWrite>
 constexpr volatile Register<Size, AccessType>* MakeRegister(uint32_t address) {
-  return reinterpret_cast<volatile Register<Size, AccessType>*>(address);
+  return reinterpret_cast<volatile Register<Size, AccessType>*>(address); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 }
