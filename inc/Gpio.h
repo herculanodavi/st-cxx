@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <variant>
 
+#include "bitset.h"
 #include "Common.h"
 #include "Register.h"
 
@@ -62,7 +63,7 @@ enum PullUpDown : std::uint8_t {
 enum Type : std::uint8_t { kOutputPushPull = 0, kOutputOpenDrain = 1 };
 
 struct Config {
-  Mode mode;
+  Mode mode = Mode::kOutput;
   Type type = Type::kOutputPushPull;
   Speed speed = Speed::kLow;
   PullUpDown pull_up_down = PullUpDown::kNone;
@@ -72,7 +73,9 @@ struct Config {
 class Port {
  public:
   void ConfigureMode(std::uint16_t pin_num, Mode mode) {
-    mode_.ApplyMask(0b11, pin_num, mode);
+    const auto mask = utils::bitrange{.position = pin_num, .width = 2};
+    utils::bitmanip(mode_).insert(mask, mode);
+    // mode_.ApplyMask(0b11, pin_num, mode);
   }
 
   void ConfigureType(std::uint16_t pin_num, Type type) {

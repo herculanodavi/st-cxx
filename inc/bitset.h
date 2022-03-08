@@ -124,6 +124,23 @@ class bitset {
     return this->test(p_range.position);
   }
 
+  template <typename U>
+  constexpr auto& insert(const bitrange& field, U value) {
+    using NormalT = std::remove_volatile_t<T>;
+    auto kBitmask = field.mask<std::remove_volatile_t<T>>();
+    auto kInvertedBitmask = field.inverted_mask<std::remove_volatile_t<T>>();
+
+    // Clear width's number of bits in the target value at the bit position
+    // specified.
+    bitset_ &= kInvertedBitmask;
+
+    // AND value with mask to remove any bits beyond the specified width.
+    // Shift masked value into bit position and OR with target value.
+    bitset_ |= (static_cast<NormalT>(value) << field.position) & kBitmask;
+
+    return *this;
+  }
+
   template <bitrange field, typename U>
   constexpr auto& insert(U value) {
     using NormalT = std::remove_volatile_t<T>;
@@ -153,7 +170,7 @@ class bitset {
 };
 
 template <typename T>
-class bitmanip {
+class bitmanip : public utils::bitset<T> {
  public:
   explicit bitmanip(T& register_reference)
       : register_reference_(register_reference), temp_(register_reference) {}
@@ -167,19 +184,18 @@ class bitmanip {
 
   auto& save() {
     if constexpr (!std::is_const_v<T>) {
-      register_reference_ = temp_.to_ullong();
+      register_reference_ = this->to_ullong();
     }
     return *this;
   }
 
   auto& update() {
-    temp_ = register_reference_;
+    register_reference_ = *this;
     return *this;
   }
 
  private:
   T& register_reference_;
-  utils::bitset<T> temp_;
 };
 
 }  // namespace utils
