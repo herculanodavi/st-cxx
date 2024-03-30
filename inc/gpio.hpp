@@ -4,8 +4,8 @@
 #include <variant>
 
 #include "bitset.h"
-#include "Common.h"
-#include "Register.h"
+#include "common.hpp"
+#include "register.hpp"
 
 namespace Gpio {
 enum PinBit : std::uint16_t {

@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "RegisterTraits.h"
+#include "register_traits.hpp"
 
 template <std::size_t Size, typename AccessType = ReadWrite>
 struct Register {

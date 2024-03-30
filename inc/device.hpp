@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Register.h"
+#include "register.hpp"
 #include "stm32f469xx.h"
 
 namespace STM32L4xx {
